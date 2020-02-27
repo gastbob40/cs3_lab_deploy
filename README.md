@@ -12,7 +12,7 @@ CS3 Lab Deploy is a project by [gastbob40](https://github.com/gastbob40).
 
 ## Requirements
 
-You will need all this element for the proper working of the project.
+You will need this element for the proper working of the project.
 
 - [Python 3](https://www.python.org/downloads/)
 
