@@ -26,7 +26,7 @@ def upload_folder(sftp: pysftp.Connection, from_computer: str, to_server: str, i
     :param blanks: List of booleans that say if the repository is empty
     """
 
-    if blanks == None:
+    if blanks is None:
         blanks = [False]
     if len(blanks) <= step // 4:
         blanks.append(False)
@@ -34,9 +34,9 @@ def upload_folder(sftp: pysftp.Connection, from_computer: str, to_server: str, i
     # Print space and tree before folder
 
     for i in range(step // 4):
-       if blanks[i]:
+        if blanks[i]:
             print(' ' * 4, end="")
-       else:
+        else:
             print('|   ', end="")
     if is_last:
         print('└───', end="")
