@@ -27,10 +27,10 @@ def upload_folder(sftp: pysftp.Connection, from_computer: str, to_server: str, i
 
     # Print space and tree before folder
     if blank:
-        for i in range(step // 4 - 1):
+        for i in range(step // 4):
             print(' ' * 4, end="")
     else:
-        for i in range(step // 4 - 1):
+        for i in range(step // 4 ):
             print('|   ', end="")
     if is_last:
         print('└───', end="")
@@ -81,13 +81,15 @@ with pysftp.Connection(host=settings['hostname'],
 
     # Uploading classes folder
     print("\nUploading classes folder")
-    upload_folder(sftp, f"{settings['project_folder']}/build/classes", f"{sftp.pwd}/WEB-INF")
+    name = f"{settings['project_folder']}/build/classes"
+    upload_folder(sftp, name, f"{sftp.pwd}/WEB-INF", len(os.listdir(name)) == 1)
 
     # Uploading all the files and subfolders under the project WebContent folder, excluding the META-INF subfolder
     print("\nUploading folder in WebContent/ (excluding META-INF/)")
     for item in os.listdir(f"{settings['project_folder']}/WebContent"):
         if item != "META-INF":
-            upload_folder(sftp, f"{settings['project_folder']}/WebContent/{item}", sftp.pwd)
+            name = f"{settings['project_folder']}/WebContent/{item}"
+            upload_folder(sftp, name, sftp.pwd, len(os.listdir(name)) == 2)
 
     # Uploading web.xml to refresh monitoring
     print("\nUploading web.xml to refresh monitoring")
