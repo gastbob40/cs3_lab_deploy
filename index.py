@@ -1,5 +1,6 @@
 # Imports
 import os
+from typing import List
 
 import pysftp
 import yaml
@@ -14,7 +15,7 @@ cnopts.hostkeys = None
 
 
 def upload_folder(sftp: pysftp.Connection, from_computer: str, to_server: str, is_last: bool = False, step: int = 1,
-                  blank: bool = False) -> None:
+                  blanks: List[bool] = None) -> None:
     """
     Copy a file or a folder
     :param sftp: The sftp connection
@@ -22,19 +23,24 @@ def upload_folder(sftp: pysftp.Connection, from_computer: str, to_server: str, i
     :param to_server: The folder to copy the file/folder inside
     :param is_last: The boolean that say if it is the last file/folder
     :param step: The number of space to space printing
-    :param blank: The boolean that say if the repository is empty
+    :param blanks: List of booleans that say if the repository is empty
     """
 
+    if blanks == None:
+        blanks = [False]
+    if len(blanks) <= step // 4:
+        blanks.append(False)
+
     # Print space and tree before folder
-    if blank:
-        for i in range(step // 4):
+
+    for i in range(step // 4):
+       if blanks[i]:
             print(' ' * 4, end="")
-    else:
-        for i in range(step // 4 ):
+       else:
             print('|   ', end="")
     if is_last:
         print('└───', end="")
-        blank = True
+        blanks[step // 4] = True
     else:
         print('├───', end="")
 
@@ -55,8 +61,9 @@ def upload_folder(sftp: pysftp.Connection, from_computer: str, to_server: str, i
         index = 1
         for item in os.listdir(from_computer):
             upload_folder(sftp, f"{from_computer}/{item}", to_server, len(os.listdir(from_computer)) == index, step + 4,
-                          blank)
+                          blanks)
             index += 1
+        blanks[step // 4] = False
 
 
 # Connect
