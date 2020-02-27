@@ -37,20 +37,20 @@ Linux/macOS:
 
 ```shell
 # Using bash/zsh
-source .venv/bin/activate
+source venv/bin/activate
 # Using fish
-. .venv/bin/activate.fish
+. venv/bin/activate.fish
 # Using csh/tcsh
-source .venv/bin/activate.csh
+source venv/bin/activate.csh
 ``` 
 
 Windows:
 
 ```
 # cmd.exe
-.venv\Scripts\activate.bat
+venv\Scripts\activate.bat
 # PowerShell
-.venv\Scripts\Activate.ps1
+venv\Scripts\Activate.ps1
 ```
 
 
