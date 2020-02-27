@@ -13,31 +13,50 @@ cnopts = pysftp.CnOpts()
 cnopts.hostkeys = None
 
 
-def upload_folder(sftp: pysftp.Connection, from_computer: str, to_server: str, step: int = 1) -> None:
+def upload_folder(sftp: pysftp.Connection, from_computer: str, to_server: str, is_last: bool = False, step: int = 1,
+                  blank: bool = False) -> None:
     """
     Copy a file or a folder
     :param sftp: The sftp connection
     :param from_computer: The file or folder to copy
     :param to_server: The folder to copy the file/folder inside
+    :param is_last: The boolean that say if it is the last file/folder
     :param step: The number of space to space printing
+    :param blank: The boolean that say if the repository is empty
     """
 
-    print(' ' * step, end="")
+    # Print space and tree before folder
+    if blank:
+        for i in range(step // 4 - 1):
+            print(' ' * 4, end="")
+    else:
+        for i in range(step // 4 - 1):
+            print('|   ', end="")
+    if is_last:
+        print('└───', end="")
+        blank = True
+    else:
+        print('├───', end="")
+
+    # Change current name
     to_server += '/' + from_computer.split('/')[-1]
 
     # Check the type of the path
     if os.path.isfile(from_computer):
         # We are in case of a file, so we can upload it
         sftp.put(from_computer, to_server)
-        print(f" - File '{from_computer.split('/')[-1]}' uploaded")
+        print(f" File '{from_computer.split('/')[-1]}' uploaded")
 
     else:
         # We are in case of a folder
         sftp.execute(f"mkdir {to_server}")
-        print(f" - Folder '{from_computer.split('/')[-1]}' created")
+        print(f" Folder '{from_computer.split('/')[-1]}' created")
 
+        index = 1
         for item in os.listdir(from_computer):
-            upload_folder(sftp, f"{from_computer}/{item}", to_server, step + 3)
+            upload_folder(sftp, f"{from_computer}/{item}", to_server, len(os.listdir(from_computer)) == index, step + 4,
+                          blank)
+            index += 1
 
 
 # Connect
@@ -45,7 +64,6 @@ with pysftp.Connection(host=settings['hostname'],
                        username=settings['username'],
                        password=settings['password'],
                        cnopts=cnopts) as sftp:
-
     print("Connection succesfully stablished.")
 
     # Change directory
@@ -54,26 +72,26 @@ with pysftp.Connection(host=settings['hostname'],
     sftp.cwd(directory)
 
     # Clean folder
-    print(f"Remove all folders and files in {directory} folder.")
+    print(f"\nRemove all folders and files in {directory} folder.")
     sftp.execute(f"rm {sftp.pwd}/* -r")
 
     # Create WEB-INF/classes folder
-    print("Creating WEB-INF and classes folder")
+    print("\nCreating WEB-INF and classes folder")
     sftp.execute(f"mkdir {sftp.pwd}/WEB-INF")
 
     # Uploading classes folder
-    print("Uploading classes folder")
+    print("\nUploading classes folder")
     upload_folder(sftp, f"{settings['project_folder']}/build/classes", f"{sftp.pwd}/WEB-INF")
 
     # Uploading all the files and subfolders under the project WebContent folder, excluding the META-INF subfolder
-    print("Uploading folder in WebContent/ (excluding META-INF/)")
+    print("\nUploading folder in WebContent/ (excluding META-INF/)")
     for item in os.listdir(f"{settings['project_folder']}/WebContent"):
         if item != "META-INF":
             upload_folder(sftp, f"{settings['project_folder']}/WebContent/{item}", sftp.pwd)
 
     # Uploading web.xml to refresh monitoring
-    print("Uploading web.xml to refresh monitoring")
-    upload_folder(sftp, f"{settings['project_folder']}/WebContent/WEB-INF/web.xml", f"{sftp.pwd}/WEB-INF")
+    print("\nUploading web.xml to refresh monitoring")
+    upload_folder(sftp, f"{settings['project_folder']}/WebContent/WEB-INF/web.xml", f"{sftp.pwd}/WEB-INF", True)
 
     # End :)
-    print("Uploading complete")
+    print("\nUploading complete")
