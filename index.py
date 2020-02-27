@@ -81,15 +81,15 @@ with pysftp.Connection(host=settings['hostname'],
 
     # Uploading classes folder
     print("\nUploading classes folder")
-    name = f"{settings['project_folder']}/build/classes"
-    upload_folder(sftp, name, f"{sftp.pwd}/WEB-INF", len(os.listdir(name)) == 1)
+    name = f"{settings['project_folder']}/build"
+    upload_folder(sftp, name + "/classes", f"{sftp.pwd}/WEB-INF", len(os.listdir(name)) == 1)
 
     # Uploading all the files and subfolders under the project WebContent folder, excluding the META-INF subfolder
     print("\nUploading folder in WebContent/ (excluding META-INF/)")
     for item in os.listdir(f"{settings['project_folder']}/WebContent"):
         if item != "META-INF":
-            name = f"{settings['project_folder']}/WebContent/{item}"
-            upload_folder(sftp, name, sftp.pwd, len(os.listdir(name)) == 2)
+            name = f"{settings['project_folder']}/WebContent"
+            upload_folder(sftp, name + f"/{item}", sftp.pwd, len(os.listdir(name)) == 2)
 
     # Uploading web.xml to refresh monitoring
     print("\nUploading web.xml to refresh monitoring")
