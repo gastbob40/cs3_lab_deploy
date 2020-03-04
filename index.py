@@ -74,7 +74,11 @@ with pysftp.Connection(host=settings['hostname'],
     print("Connection succesfully stablished.")
 
     # Change directory
-    directory = 'test'  # TODO Thing to change the name to real test
+    directory = settings['folder_to_deploy']
+
+    if not directory:
+        raise Exception("The folder to deploy is not defined")
+
     print(f"Change directory to {directory}.")
     sftp.cwd(directory)
 

@@ -2,3 +2,4 @@ hostname: ~           # This is the hostname of the sftp server
 username: ~           # This is your username in the server
 password: ~           # This is your password in the server
 project_folder: ~     # This is the place of the project on YOUR computer
+folder_to_deploy: ~   # This is the place to deploy the project on the server
