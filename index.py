@@ -82,9 +82,10 @@ with pysftp.Connection(host=settings['hostname'],
     print(f"Change directory to {directory}.")
     sftp.cwd(directory)
 
-    # Clean folder
-    print(f"\nRemove all folders and files in {directory} folder.")
-    sftp.execute(f"rm {sftp.pwd}/* -r")
+    # Clean folder (if clean_deploy == true)
+    if settings['clean_deploy']:
+        print(f"\nRemove all folders and files in {directory} folder.")
+        sftp.execute(f"rm {sftp.pwd}/* -r")
 
     # Create WEB-INF/classes folder
     print("\nCreating WEB-INF and classes folder")

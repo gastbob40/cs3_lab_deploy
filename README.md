@@ -78,6 +78,7 @@ username: ~           # This is your username in the server
 password: ~           # This is your password in the server
 project_folder: ~     # This is the place of the project on YOUR computer
 folder_to_deploy: ~   # This is the place to deploy the project on the server
+clean_deploy: ~       # If set to true, to script will delete the content of www folder, else it will just add files
 ```
 
 You must fill in the file and rename it to `settings.yml`
